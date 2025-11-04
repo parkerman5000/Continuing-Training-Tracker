@@ -1,0 +1,5 @@
+{
+  "name": "Continuing Training Tracker",
+  "description": "A simple, mobile-friendly web app to track and submit continuing training activities. It features automatic credit calculation, a live progress bar, and a streamlined single-screen interface to make form completion fast and easy.",
+  "requestFramePermissions": []
+}
