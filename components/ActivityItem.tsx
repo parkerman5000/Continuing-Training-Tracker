@@ -1,4 +1,3 @@
-
 import React from 'react';
 import type { Activity } from '../types';
 import { ACTIVITIES, ROTATIONAL } from '../constants';
@@ -84,7 +83,7 @@ export const ActivityItem: React.FC<ActivityItemProps> = ({ activity, index, onU
         if (!config) return null;
 
         const commonProps = {
-            className: "w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-brand-primary focus:border-brand-primary",
+            className: "w-full px-3 py-2 bg-white text-gray-900 border border-gray-300 rounded-md shadow-sm focus:ring-brand-primary focus:border-brand-primary",
             value: activity.value,
             onChange: handleValueChange
         };
@@ -145,14 +144,14 @@ export const ActivityItem: React.FC<ActivityItemProps> = ({ activity, index, onU
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                         <label className="block text-sm font-medium text-gray-700 mb-1">Training Activity</label>
-                        <select value={activity.activity} onChange={handleActivityChange} className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-brand-primary focus:border-brand-primary">
+                        <select value={activity.activity} onChange={handleActivityChange} className="w-full px-3 py-2 bg-white text-gray-900 border border-gray-300 rounded-md shadow-sm focus:ring-brand-primary focus:border-brand-primary">
                             <option value="">-- Select an activity --</option>
                             {Object.keys(ACTIVITIES).map(act => <option key={act} value={act}>{act}</option>)}
                         </select>
                     </div>
                     <div>
                         <label className="block text-sm font-medium text-gray-700 mb-1">Date Completed</label>
-                        <input type="date" value={activity.date} onChange={e => onUpdate(activity.id, { date: e.target.value })} className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-brand-primary focus:border-brand-primary" />
+                        <input type="date" value={activity.date} onChange={e => onUpdate(activity.id, { date: e.target.value })} className="w-full px-3 py-2 bg-white text-gray-900 border border-gray-300 rounded-md shadow-sm focus:ring-brand-primary focus:border-brand-primary" />
                     </div>
                 </div>
 
@@ -167,7 +166,7 @@ export const ActivityItem: React.FC<ActivityItemProps> = ({ activity, index, onU
                         </div>
                          <div>
                             <label className="block text-sm font-medium text-gray-700 mb-1">Upload Certificate(s)</label>
-                             <input type="file" multiple onChange={handleFileChange} className="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100" />
+                             <input type="file" multiple onChange={handleFileChange} className="w-full text-sm text-gray-900 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100" />
                             {activity.files.length > 0 && <div className="text-xs text-gray-500 mt-1">{activity.files.length} file(s) selected.</div>}
                         </div>
                     </div>
