@@ -15,61 +15,29 @@ export const ActivityItem: React.FC<ActivityItemProps> = ({ activity, index, onU
     const handleActivityChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
         const newActivityName = e.target.value;
         const newConfig = ACTIVITIES[newActivityName];
-        let newCredits = 0;
         let newValue: string | number = 0;
 
         if (newConfig) {
-            // FIX: Use string.includes() to check for substrings instead of the 'in' operator, which is for object properties.
+            // Set intelligent defaults for the 'value' field when activity type changes
             if (newConfig.rate.includes("80 flat")) {
-                newCredits = 80;
+                newValue = 0; // No value input needed
             } else if (newConfig.rate.includes("20-40")) {
                 newValue = 30; // Default slider value
-                newCredits = 30;
             } else if (newConfig.rate.includes("duration-based")) {
-                newValue = 1; // Default months
-                newCredits = ROTATIONAL[1];
+                newValue = 1; // Default to 1 month
             }
         }
         
-        onUpdate(activity.id, { activity: newActivityName, credits: newCredits, value: newValue });
+        onUpdate(activity.id, { activity: newActivityName, value: newValue });
     };
 
     const handleValueChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-        const config = ACTIVITIES[activity.activity];
-        if (!config) return;
-
         const rawValue = e.target.value;
-        let numericValue = e.target.type === 'number' || e.target.tagName === 'SELECT' ? parseFloat(rawValue) : 0;
-        let newCredits = 0;
-
-        // FIX: Use string.includes() to check for substrings instead of the 'in' operator. The 'not in' syntax was also invalid and replaced with !string.includes().
-        if (config.rate.includes("per hour") && !config.rate.includes("2 hours")) {
-            newCredits = numericValue;
-        } else if (config.rate.includes("per semester")) {
-            newCredits = numericValue * 10;
-        } else if (config.rate.includes("per CEU")) {
-            newCredits = numericValue * 10;
-        } else if (config.rate.includes("same as course")) {
-            newCredits = numericValue;
-        } else if (config.rate.includes("20-40")) {
-            newCredits = numericValue;
-        } else if (config.rate.includes("duration-based")) {
-            newCredits = ROTATIONAL[numericValue];
-        } else if (config.rate.includes("80 flat")) {
-            newCredits = 80;
-        } else if (config.rate.includes("2 per activity")) {
-            newCredits = numericValue * 2;
-        } else if (config.rate.includes("1 per 2 hours")) {
-            newCredits = numericValue / 2;
-        } else {
-             newCredits = numericValue;
-        }
+        let numericValue = e.target.type === 'range' || e.target.type === 'number' || e.target.tagName === 'SELECT' 
+            ? parseFloat(rawValue) 
+            : 0;
         
-        if (config.max && newCredits > config.max) {
-            newCredits = config.max;
-        }
-        
-        onUpdate(activity.id, { value: numericValue, credits: newCredits });
+        onUpdate(activity.id, { value: numericValue });
     };
     
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -83,12 +51,11 @@ export const ActivityItem: React.FC<ActivityItemProps> = ({ activity, index, onU
         if (!config) return null;
 
         const commonProps = {
-            className: "w-full px-3 py-2 bg-white text-gray-900 border border-gray-300 rounded-md shadow-sm focus:ring-brand-primary focus:border-brand-primary",
+            className: "w-full px-3 py-2 bg-gray-100 text-gray-900 border border-gray-300 rounded-md shadow-sm focus:ring-brand-primary focus:border-brand-primary",
             value: activity.value,
             onChange: handleValueChange
         };
         
-        // FIX: Use string.includes() to check for substrings instead of the 'in' operator. The 'not in' syntax was also invalid and replaced with !string.includes().
         if (config.rate.includes("per hour") && !config.rate.includes("2 hours")) {
             return <input type="number" min="0" step="0.5" {...commonProps} />;
         }
@@ -106,7 +73,7 @@ export const ActivityItem: React.FC<ActivityItemProps> = ({ activity, index, onU
         }
         if (config.rate.includes("duration-based")) {
             return (
-                <select {...commonProps}>
+                <select {...commonProps} value={String(activity.value)}>
                     {Object.keys(ROTATIONAL).map(m => <option key={m} value={m}>{m} month(s)</option>)}
                 </select>
             );
@@ -128,14 +95,14 @@ export const ActivityItem: React.FC<ActivityItemProps> = ({ activity, index, onU
     return (
         <details className="bg-gray-50 border border-gray-200 rounded-lg overflow-hidden" open>
             <summary className="p-4 flex justify-between items-center cursor-pointer hover:bg-gray-100">
-                <h3 className="font-semibold text-gray-700">
-                    {activity.activity ? `${index + 1}: ${activity.activity.substring(0,40)}...` : `Activity ${index + 1}`}
+                <h3 className="font-semibold text-gray-700 truncate pr-2">
+                    {activity.activity ? `${index + 1}: ${activity.activity}` : `New Activity ${index + 1}`}
                 </h3>
-                <div className="flex items-center gap-4">
+                <div className="flex items-center gap-4 flex-shrink-0">
                      <span className={`font-bold text-lg ${activity.credits > 0 ? 'text-green-600' : 'text-gray-400'}`}>
                         {activity.credits.toFixed(1)}
                     </span>
-                    <button onClick={() => onRemove(activity.id)} className="text-red-500 hover:text-red-700 p-1 rounded-full hover:bg-red-100">
+                    <button onClick={() => onRemove(activity.id)} aria-label={`Remove activity ${index + 1}`} className="text-red-500 hover:text-red-700 p-1 rounded-full hover:bg-red-100">
                         <TrashIcon />
                     </button>
                 </div>
@@ -144,14 +111,14 @@ export const ActivityItem: React.FC<ActivityItemProps> = ({ activity, index, onU
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                         <label className="block text-sm font-medium text-gray-700 mb-1">Training Activity</label>
-                        <select value={activity.activity} onChange={handleActivityChange} className="w-full px-3 py-2 bg-white text-gray-900 border border-gray-300 rounded-md shadow-sm focus:ring-brand-primary focus:border-brand-primary">
+                        <select value={activity.activity} onChange={handleActivityChange} className="w-full px-3 py-2 bg-gray-100 text-gray-900 border border-gray-300 rounded-md shadow-sm focus:ring-brand-primary focus:border-brand-primary">
                             <option value="">-- Select an activity --</option>
                             {Object.keys(ACTIVITIES).map(act => <option key={act} value={act}>{act}</option>)}
                         </select>
                     </div>
                     <div>
                         <label className="block text-sm font-medium text-gray-700 mb-1">Date Completed</label>
-                        <input type="date" value={activity.date} onChange={e => onUpdate(activity.id, { date: e.target.value })} className="w-full px-3 py-2 bg-white text-gray-900 border border-gray-300 rounded-md shadow-sm focus:ring-brand-primary focus:border-brand-primary" />
+                        <input type="date" value={activity.date} onChange={e => onUpdate(activity.id, { date: e.target.value })} className="w-full px-3 py-2 bg-gray-100 text-gray-900 border border-gray-300 rounded-md shadow-sm focus:ring-brand-primary focus:border-brand-primary" />
                     </div>
                 </div>
 
@@ -166,7 +133,7 @@ export const ActivityItem: React.FC<ActivityItemProps> = ({ activity, index, onU
                         </div>
                          <div>
                             <label className="block text-sm font-medium text-gray-700 mb-1">Upload Certificate(s)</label>
-                             <input type="file" multiple onChange={handleFileChange} className="w-full text-sm text-gray-900 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100" />
+                             <input type="file" multiple onChange={handleFileChange} className="block w-full text-sm text-gray-900 bg-gray-100 border border-gray-300 rounded-md cursor-pointer focus:outline-none file:mr-4 file:py-1.5 file:px-3 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-blue-100 file:text-blue-800 hover:file:bg-blue-200" />
                             {activity.files.length > 0 && <div className="text-xs text-gray-500 mt-1">{activity.files.length} file(s) selected.</div>}
                         </div>
                     </div>

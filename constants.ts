@@ -16,8 +16,8 @@ export const ACTIVITIES: Activities = {
     "Association Leadership Role (such as ANSI, AMSE)": {"rate": "1 per hour", "max": 20},
     "Facility Representative Delta Qualification": {"rate": "80 flat", "max": null},
     "Positional Training (such as for STSM, Facility Representative, Quality Assurance Assessor, Project Management, Contracting Officer Representative)": {"rate": "1 per hour", "max": null},
-    "Self-Study (changes/revisions to technical standards, published articles/literature)": {"rate": "2 per activity", "max": 20},
-    "“Lunch and Learn” or similar facilitated discussion": {"rate": "1 per hour", "max": 20},
+    "Self-Study (changes/revisions to technical standards, published articles/literature relating to technical competencies, etc)": {"rate": "2 per activity", "max": 20},
+    "“Lunch and Learn” or similar facilitated discussion applicable to technical competencies": {"rate": "1 per hour", "max": 20},
     "Assessments/Investigations": {"rate": "1 per 2 hours", "max": 40},
 };
 
