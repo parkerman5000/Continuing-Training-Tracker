@@ -25,8 +25,8 @@ export const ROTATIONAL: RotationalCredits = {1:20, 2:30, 3:35, 6:45, 9:65, 12:8
 
 export const GOALS: Goals = {
     "Facility Representative": 80, 
-    "STSM": 60, 
-    "Quality Assurance Assessor": 70,
-    "Project Management": 65, 
-    "Contracting Officer Representative": 60
+    "STSM": 80, 
+    "Quality Assurance Assessor": 80,
+    "Project Management": 80, 
+    "Contracting Officer Representative": 80
 };

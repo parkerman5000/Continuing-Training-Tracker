@@ -1,7 +1,7 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import type { Activity } from '../types';
 import { ACTIVITIES, ROTATIONAL } from '../constants';
-import { TrashIcon } from './icons';
+import { TrashIcon, CalendarIcon } from './icons';
 
 interface ActivityItemProps {
     activity: Activity;
@@ -11,6 +11,7 @@ interface ActivityItemProps {
 }
 
 export const ActivityItem: React.FC<ActivityItemProps> = ({ activity, index, onUpdate, onRemove }) => {
+    const dateInputRef = useRef<HTMLInputElement>(null);
     
     const handleActivityChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
         const newActivityName = e.target.value;
@@ -117,8 +118,23 @@ export const ActivityItem: React.FC<ActivityItemProps> = ({ activity, index, onU
                         </select>
                     </div>
                     <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">Date Completed</label>
-                        <input type="date" value={activity.date} onChange={e => onUpdate(activity.id, { date: e.target.value })} className="w-full px-3 py-2 bg-gray-100 text-gray-900 border border-gray-300 rounded-md shadow-sm focus:ring-brand-primary focus:border-brand-primary" />
+                        <label htmlFor={`date-${activity.id}`} className="block text-sm font-medium text-gray-700 mb-1">Date Completed</label>
+                        <div className="relative">
+                            <input 
+                                type="date"
+                                ref={dateInputRef}
+                                id={`date-${activity.id}`}
+                                value={activity.date} 
+                                onChange={e => onUpdate(activity.id, { date: e.target.value })} 
+                                className="w-full pl-3 pr-10 py-2 bg-gray-100 text-gray-900 border border-gray-300 rounded-md shadow-sm focus:ring-brand-primary focus:border-brand-primary" 
+                            />
+                            <div 
+                                className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-500 cursor-pointer"
+                                onClick={() => dateInputRef.current?.showPicker()}
+                            >
+                                <CalendarIcon />
+                            </div>
+                        </div>
                     </div>
                 </div>
 
